@@ -1,0 +1,62 @@
+[
+    {
+        "x_min": 6330,
+        "x_max": 6410,
+        "y_min": 4140,
+        "y_max": 4210,
+        "z_min": 1,
+        "z_max": 16,
+        "x_interval": 5,
+        "z_interval": 5,
+        "x_interval_s": 1,
+        "z_interval_s": 1,
+        "step_x": 10,
+        "step_z": 5,
+        "step_all": 40
+    },
+    {
+        "x_min": 6700,
+        "x_max": 6890,
+        "y_min": 5240,
+        "y_max": 5420,
+        "z_min": 1,
+        "z_max": 16,
+        "x_interval": 10,
+        "z_interval": 10,
+        "x_interval_s": 1,
+        "z_interval_s": 1,
+        "step_x": 10,
+        "step_z": 5,
+        "step_all": 40
+    },
+    {
+        "x_min": 5990,
+        "x_max": 6220,
+        "y_min": 3520,
+        "y_max": 3880,
+        "z_min": 1,
+        "z_max": 51,
+        "x_interval": 10,
+        "z_interval": 10,
+        "x_interval_s": 5,
+        "z_interval_s": 5,
+        "step_x": 20,
+        "step_z": 10,
+        "step_all": 40
+    },
+    {
+        "x_min": 7440,
+        "x_max": 7860,
+        "y_min": -3740,
+        "y_max": -3500,
+        "z_min": -110,
+        "z_max": 0,
+        "x_interval": 5,
+        "z_interval": 5,
+        "x_interval_s": 1,
+        "z_interval_s": 1,
+        "step_x": 10,
+        "step_z": 5,
+        "step_all": 40
+    }
+]
