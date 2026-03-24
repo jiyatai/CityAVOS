@@ -1,4 +1,4 @@
-```markdown
+
 # CityAVOS
 
 [![AAAI 2026](https://img.shields.io/badge/AAAI-2026-blue.svg)](https://ojs.aaai.org/index.php/AAAI/article/view/38898)
