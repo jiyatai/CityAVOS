@@ -5,7 +5,7 @@
 [![Python 3.8](https://img.shields.io/badge/Python-3.8-green.svg)](https://www.python.org/downloads/release/python-380/)
 [![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)]()
 
-> **CityAVOS**: Drone-based Active Visual Object Search in Urban Environments
+> **CityAVOS**: Towards autonomous uav visual object search in city space: Benchmark and agentic methodology
 
 CityAVOS is a research project for **UAV (drone) target search tasks in urban spaces**, built upon the [EmbodiedCity](https://github.com/tsinghua-fib-lab/EmbodiedCity) simulator. It integrates large language model (LLM) agents, Grounded-SAM for visual grounding and segmentation, and AirSim for realistic drone control within Unreal Engine 5.3 environments.
 
