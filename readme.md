@@ -186,5 +186,3 @@ If you find this work useful in your research, please consider citing:
 
 This project is released under the [MIT License](LICENSE).
 ```
-
----
