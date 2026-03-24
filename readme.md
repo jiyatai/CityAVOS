@@ -1,111 +1,190 @@
+```markdown
+# CityAVOS
 
+[![AAAI 2026](https://img.shields.io/badge/AAAI-2026-blue.svg)](https://ojs.aaai.org/index.php/AAAI/article/view/38898)
+[![Python 3.8](https://img.shields.io/badge/Python-3.8-green.svg)](https://www.python.org/downloads/release/python-380/)
+[![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)]()
 
-## 1. 环境准备 (Prerequisites)
+> **CityAVOS**: Drone-based Active Visual Object Search in Urban Environments
 
-*   **OS**: Linux / Windows
-*   **GPU**: NVIDIA GPU with CUDA support
-*   **Manager**: Anaconda or Miniconda
+CityAVOS is a research project for **UAV (drone) target search tasks in urban spaces**, built upon the [EmbodiedCity](https://github.com/tsinghua-fib-lab/EmbodiedCity) simulator. It integrates large language model (LLM) agents, Grounded-SAM for visual grounding and segmentation, and AirSim for realistic drone control within Unreal Engine 5.3 environments.
 
-## 2. 创建 Conda 环境
+📄 **Paper**: Published at **AAAI 2026** — [Read the Paper](https://ojs.aaai.org/index.php/AAAI/article/view/38898)
 
-首先创建一个 Python 3.8 的基础环境并激活：
+---
+
+## 🏗️ Architecture Overview
+
+```
+CityAVOS
+├── main/
+│   ├── main.py              # Main entry point
+│   └── mykey.py             # AirSim connection test script
+├── GroundedSAM/
+│   ├── GroundingDINO/        # Visual grounding module
+│   ├── weights/              # Model weights directory
+│   └── bert-base-uncased/    # BERT model for text encoding
+└── llm_agent.py                # LLM-based decision agent
+```
+
+---
+
+## 📋 Prerequisites
+
+| Requirement | Details |
+|---|---|
+| **OS** | Windows |
+| **GPU** | NVIDIA GPU with CUDA support |
+| **Package Manager** | [Anaconda](https://www.anaconda.com/) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html) |
+| **Game Engine** | Unreal Engine 5.3 |
+
+---
+
+## 🚀 Installation
+
+### 1. Install External Dependencies
+
+#### EmbodiedCity Simulator
+
+Follow the instructions to install the EmbodiedCity simulator:
+
+👉 [https://github.com/tsinghua-fib-lab/EmbodiedCity](https://github.com/tsinghua-fib-lab/EmbodiedCity)
+
+#### Modified AirSim (Colosseum for UE 5.3)
+
+Install the UE 5.3 compatible version of AirSim:
+
+👉 [https://github.com/CodexLabsLLC/Colosseum/tree/ue-5.3](https://github.com/CodexLabsLLC/Colosseum/tree/ue-5.3)
+
+---
+
+### 2. Create Conda Environment
 
 ```bash
 conda create -n CityAVOS python=3.8 -y
 conda activate CityAVOS
 ```
 
-## 3. 安装 PyTorch
+---
 
-根据你的显卡驱动版本安装对应的 PyTorch。
-> **注意**: 本项目 GroundingDINO 需要编译 CUDA 算子，请确保系统安装的 CUDA Toolkit 版本与 PyTorch 的 CUDA 版本一致或兼容。
-
-这里使用 **CUDA 12.4** 版本：
+### 3. Configure AirSim Python Client
 
 ```bash
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+pip install msgpack-rpc-python
+pip install airsim
+pip install pygame
 ```
 
-## 4. 安装 Grounded-Segment-Anything
+> ✅ **Verification**: Run `python main/mykey.py` to verify that the AirSim environment is correctly installed and connected.
 
-### 4.1 克隆代码库
-下载项目代码（如果尚未下载）：
+---
+
+### 4. Install Grounded-SAM
+
+Reference: [Grounded-Segment-Anything](https://github.com/IDEA-Research/Grounded-Segment-Anything)
 
 ```bash
-git clone https://github.com/IDEA-Research/Grounded-Segment-Anything.git
 cd Grounded-Segment-Anything
+
+# Install Segment Anything
+pip install segment_anything
+
+# Install GroundingDINO
+cd GroundingDINO
+pip install -e .
+cd ..
 ```
 
-### 4.2 安装依赖库
-依次安装 Segment Anything (SAM) 和 GroundingDINO：
+---
 
-```bash
-# 安装 Segment Anything
-python -m pip install -e segment_anything
+### 5. Download Model Weights
 
-# 安装 GroundingDINO (需要编译 CUDA 扩展)
-pip install --no-build-isolation -e GroundingDINO
+Download the following model weights and place them in `Grounded-Segment-Anything/weights/`:
+
+| Model | Filename | Download |
+|---|---|---|
+| GroundingDINO | `groundingdino_swint_ogc.pth` | [Link](https://github.com/IDEA-Research/GroundingDINO/releases) |
+| SAM ViT-H | `sam_vit_h_4b8939.pth` | [Link](https://github.com/facebookresearch/segment-anything#model-checkpoints) |
+
+```
+Grounded-Segment-Anything/
+└── weights/
+    ├── groundingdino_swint_ogc.pth
+    └── sam_vit_h_4b8939.pth
 ```
 
-## 5. 下载模型权重 (Model Weights)
+---
 
-请将以下权重文件下载并放置在 `Grounded-Segment-Anything` 项目根目录下。
+### 6. Download BERT Model
 
-### 5.1 SAM & GroundingDINO 权重
+Download `bert-base-uncased` and place it under the `Grounded-Segment-Anything/` directory:
 
-**Linux (wget):**
-```bash
-# SAM ViT-H Checkpoint
-wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
-
-# GroundingDINO Swin-T Checkpoint
-wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
 ```
-
-**Windows / 手动下载:**
-如果 `wget` 不可用，请点击链接下载并手动放入目录：
-*   [sam_vit_h_4b8939.pth](https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth)
-*   [groundingdino_swint_ogc.pth](https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth)
-
-### 5.2 BERT 模型 (离线加载)
-
-由于网络原因或离线运行需求，请下载 `bert-base-uncased` 模型文件。
-
-1.  访问 HuggingFace: [bert-base-uncased](https://huggingface.co/bert-base-uncased/tree/main)
-2.  下载必要文件（`config.json`, `pytorch_model.bin`, `vocab.txt`, `tokenizer.json` 等）。
-3.  将文件放置在 `code/bert-base-uncased` 目录下（或根据代码中的 `text_encoder_type` 路径进行调整）。
-
-目录结构示例：
-```text
-code/
+Grounded-Segment-Anything/
 └── bert-base-uncased/
     ├── config.json
-    ├── pytorch_model.bin
     ├── tokenizer.json
-    └── vocab.txt
+    ├── vocab.txt
+    └── ...
 ```
 
-## 6. 运行 Demo 测试
+You can download it from [Hugging Face](https://huggingface.co/bert-base-uncased).
 
-使用以下命令运行 `grounded_sam_demo.py` 进行测试。该脚本将使用文本提示 "bear" 检测并分割图片中的对象。
+---
+
+### 7. Configure LLM Agent
+
+Set up the API key for the LLM agent. Update the key configuration in the `llm_agent` module:
+
+```python
+# Example: configure your API key
+API_KEY = "your-api-key-here"
+```
+
+---
+
+## ▶️ Usage
+
+Make sure the EmbodiedCity simulator (UE 5.3) is running, then execute:
 
 ```bash
-python grounded_sam_demo.py \
-  --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
-  --grounded_checkpoint groundingdino_swint_ogc.pth \
-  --sam_checkpoint sam_vit_h_4b8939.pth \
-  --input_image assets/demo1.jpg \
-  --output_dir "outputs" \
-  --box_threshold 0.3 \
-  --text_threshold 0.25 \
-  --text_prompt "bear" \
-  --device "cuda"
+conda activate CityAVOS
+python main.py
 ```
 
-**参数说明:**
-*   `--box_threshold`: 检测框的置信度阈值。
-*   `--text_threshold`: 文本匹配的置信度阈值。
-*   `--text_prompt`: 你想要检测的物体名称（支持自然语言）。
+---
 
-运行成功后，结果将保存在 `outputs` 文件夹中。
+## 📖 Citation
 
+If you find this work useful in your research, please consider citing:
+
+```bibtex
+@inproceedings{ji2026towards,
+  title={Towards autonomous uav visual object search in city space: Benchmark and agentic methodology},
+  author={Ji, Yatai and Zhu, Zhengqiu and Zhao, Yong and Liu, Beidan and Gao, Chen and Zhao, Yihao and Qiu, Sihang and Hu, Yue and Yin, Quanjun},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume={40},
+  number={22},
+  pages={18342--18350},
+  year={2026}
+}
+```
+
+---
+
+## 🙏 Acknowledgements
+
+- [EmbodiedCity](https://github.com/tsinghua-fib-lab/EmbodiedCity) — Urban embodied simulation platform
+- [Colosseum (AirSim)](https://github.com/CodexLabsLLC/Colosseum) — Open-source drone simulation for UE 5.3
+- [Grounded-Segment-Anything](https://github.com/IDEA-Research/Grounded-Segment-Anything) — Visual grounding & segmentation
+- [Segment Anything (SAM)](https://github.com/facebookresearch/segment-anything) — Foundation model for segmentation
+- [GroundingDINO](https://github.com/IDEA-Research/GroundingDINO) — Open-set object detection
+
+---
+
+## 📄 License
+
+This project is released under the [MIT License](LICENSE).
+```
+
+---
